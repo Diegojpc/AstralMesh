@@ -5,6 +5,10 @@ import { AudioEngine } from './js/audio.js';
 import { Synth } from './js/synth.js';
 import { LightEstimator, coverMapper } from './js/lighting.js';
 import { GyroPose, VisualTracker, videoFocalPx } from './js/tracking.js';
+import { startSlam } from './js/slam.js';
+
+// the 8th Wall engine's three.js module reads the global
+window.THREE = THREE;
 
 const $ = (id) => document.getElementById(id);
 
@@ -28,16 +32,22 @@ const PALETTES = [
 const uniforms = makeUniforms(THREE);
 const mats = createMaterials(THREE, uniforms);
 
-const canvas = $('gl');
+let canvas = $('gl');
 const video = $('cam');
-const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, stencil: true, powerPreference: 'high-performance' });
+let renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, stencil: true, powerPreference: 'high-performance' });
 renderer.setClearColor(0x000000, 0);
 const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
 renderer.setPixelRatio(pixelRatio);
 uniforms.uPixelRatio.value = pixelRatio;
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(60, 1, 0.05, 80);
+let scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera(60, 1, 0.05, 80);
+const CAM_START_Y = 1.35;           // camera height at start; the floor is assumed below it
+camera.position.set(0, CAM_START_Y, 0);
+const fallbackStage = { scene, camera, renderer, canvas };
+let slam = null;                    // 8th Wall handle when world tracking is running
+let hasStencil = true;              // the engine's renderer has none, so shadows use min-blending there
+const shadowMat = () => (hasStencil ? mats.shadowMesh : mats.shadowMeshMin);
 const content = new THREE.Group();   // anchored in the world
 const spin = new THREE.Group();      // spins around the figure's vertical axis
 content.add(spin);
@@ -76,6 +86,7 @@ function rebuild() {
   const group = new THREE.Group();
   const geos = [];
   const add = (obj, order) => { obj.frustumCulled = false; obj.renderOrder = order; group.add(obj); };
+  let shadowMeshObj = null;
   let radius = 0.8;
   let lineGeo = null, fuzzGeo = null;
 
@@ -84,7 +95,8 @@ function rebuild() {
     geo.setAttribute('normal', new THREE.Float32BufferAttribute(fig.mesh.nrm, 3));
     geo.setIndex(fig.mesh.idx);
     geos.push(geo);
-    add(new THREE.Mesh(geo, mats.shadowMesh), -3);       // hard silhouette shadow on the floor
+    shadowMeshObj = new THREE.Mesh(geo, shadowMat());
+    add(shadowMeshObj, -3);                              // hard silhouette shadow on the floor
     add(new THREE.Mesh(geo, mats.mesh), 0);              // black body with neon bands
   }
   if (fig.lines) {
@@ -106,7 +118,7 @@ function rebuild() {
     for (let i = 0; i < part.pos.length; i += 3) radius = Math.max(radius, Math.hypot(part.pos[i], part.pos[i + 1], part.pos[i + 2]));
   }
   radius = radius || 0.6;
-  figure = { group, geos, minY: minY(fig), radius, lineGeo, fuzzGeo, layerVerts: fig.lines?.layerVerts, fuzzCount: fig.points?.depth.length ?? 0 };
+  figure = { group, geos, shadowMeshObj, minY: minY(fig), radius, lineGeo, fuzzGeo, layerVerts: fig.lines?.layerVerts, fuzzCount: fig.points?.depth.length ?? 0 };
   spin.add(group);
 
   uniforms.uWing.value = gen.wing ? 1 : 0;
@@ -139,7 +151,8 @@ const UP = new THREE.Vector3(0, 1, 0);
 const tmp = new THREE.Vector3();
 const ray = new THREE.Vector3();
 
-function ground() { return -params.phoneHeight; }
+let groundOverride = null;           // floor height from an engine hit test, when we have one
+function ground() { return groundOverride ?? (CAM_START_Y - params.phoneHeight); }
 
 function orient() {
   const gen = GENERATORS[geometryIndex];
@@ -189,6 +202,7 @@ function groundPoint(clientX, clientY) {
 // ---------------------------------------------------------------- camera registration
 
 function updateFov() {
+  if (slam) return;
   const w = window.innerWidth, h = window.innerHeight;
   if (video.videoWidth > 0) {
     const scale = Math.max(w / video.videoWidth, h / video.videoHeight); // object-fit: cover
@@ -200,6 +214,7 @@ function updateFov() {
 }
 
 function resize() {
+  if (slam) return;
   const w = window.innerWidth, h = window.innerHeight;
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
@@ -269,7 +284,7 @@ function buildPanel() {
     $('s-' + key).addEventListener('input', (e) => { params[key] = +e.target.value; });
   }
   $('s-sens').addEventListener('input', (e) => { audio.sens = +e.target.value; });
-  $('s-height').addEventListener('input', (e) => { params.phoneHeight = +e.target.value; stand(); });
+  $('s-height').addEventListener('input', (e) => { params.phoneHeight = +e.target.value; groundOverride = null; stand(); });
   // density regenerates the mesh, so only commit when the slider is released
   $('s-density').addEventListener('change', (e) => { params.density = +e.target.value; rebuild(); });
 
@@ -280,7 +295,11 @@ function buildPanel() {
   $('c-feedback').addEventListener('change', (e) => synth.setFeedback(e.target.checked));
   $('c-light').addEventListener('change', (e) => { light.enabled = e.target.checked; });
   $('btn-toggle').addEventListener('click', () => $('panel').classList.toggle('collapsed'));
-  $('btn-center').addEventListener('click', () => { tracker.reset(); if (!gyro.active) camera.quaternion.identity(); content.scale.setScalar(1); recenter(); });
+  $('btn-center').addEventListener('click', () => {
+    tracker.reset();
+    if (slam) slam.recenter(); else if (!gyro.active) camera.quaternion.identity();
+    groundOverride = null; content.scale.setScalar(1); recenter();
+  });
 
   const setActive = (id) => {
     for (const b of ['btn-mic', 'btn-demo']) $(b).classList.toggle('on', b === id);
@@ -317,55 +336,90 @@ const pointers = new Map();
 let pinchStart = 0, scaleStart = 1;
 let gesture = null; // { kind: 'play' | 'tap', x, y, t, lastX, lastY, lastT }
 
-canvas.addEventListener('pointerdown', (e) => {
-  pointers.set(e.pointerId, e);
-  if (pointers.size === 2) {
-    const [a, b] = [...pointers.values()];
-    pinchStart = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-    scaleStart = content.scale.x;
-    gesture = null;
-    return;
-  }
-  const fs = figureOnScreen();
-  const inside = fs && Math.hypot(e.clientX - fs.x, e.clientY - fs.y) < Math.max(fs.r, 40);
-  gesture = { kind: inside ? 'play' : 'tap', x: e.clientX, y: e.clientY, t: performance.now(), lastX: e.clientX, lastY: e.clientY, lastT: performance.now(), fs };
-  if (inside) { audio.init(); synth.play(...touchXY(e, fs), 0.5); }
-});
-canvas.addEventListener('pointermove', (e) => {
-  if (!pointers.has(e.pointerId)) return;
-  pointers.set(e.pointerId, e);
-  if (pointers.size === 2 && pinchStart > 0) {
-    const [a, b] = [...pointers.values()];
-    const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-    content.scale.setScalar(clamp(scaleStart * (d / pinchStart), 0.25, 4));
-    stand();
-    return;
-  }
-  if (!gesture) return;
-  const now = performance.now();
-  if (gesture.kind === 'play') {
-    const speed = Math.hypot(e.clientX - gesture.lastX, e.clientY - gesture.lastY) / Math.max(1, now - gesture.lastT) / 1.2;
-    synth.play(...touchXY(e, gesture.fs), speed);
-  } else if (Math.hypot(e.clientX - gesture.x, e.clientY - gesture.y) > 14) {
-    gesture = null; // it is a drag, not a tap
-    return;
-  }
-  gesture.lastX = e.clientX; gesture.lastY = e.clientY; gesture.lastT = now;
-});
-const endPointer = (e) => {
-  if (gesture && gesture.kind === 'tap' && performance.now() - gesture.t < 400 && pointers.size === 1) {
-    const p = groundPoint(e.clientX, e.clientY);
-    if (p) placeAt(p.x, p.z); // tap the floor: stand the figure there
-  }
-  pointers.delete(e.pointerId);
-  pinchStart = 0;
-  if (pointers.size === 0) gesture = null;
-};
-canvas.addEventListener('pointerup', endPointer);
-canvas.addEventListener('pointercancel', (e) => { pointers.delete(e.pointerId); pinchStart = 0; gesture = null; });
+function bindPointer(el) {
+  el.addEventListener('pointerdown', (e) => {
+    pointers.set(e.pointerId, e);
+    if (pointers.size === 2) {
+      const [a, b] = [...pointers.values()];
+      pinchStart = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      scaleStart = content.scale.x;
+      gesture = null;
+      return;
+    }
+    const fs = figureOnScreen();
+    const inside = fs && Math.hypot(e.clientX - fs.x, e.clientY - fs.y) < Math.max(fs.r, 40);
+    gesture = { kind: inside ? 'play' : 'tap', x: e.clientX, y: e.clientY, t: performance.now(), lastX: e.clientX, lastY: e.clientY, lastT: performance.now(), fs };
+    if (inside) { audio.init(); synth.play(...touchXY(e, fs), 0.5); }
+  });
+  el.addEventListener('pointermove', (e) => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, e);
+    if (pointers.size === 2 && pinchStart > 0) {
+      const [a, b] = [...pointers.values()];
+      const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+      content.scale.setScalar(clamp(scaleStart * (d / pinchStart), 0.25, 4));
+      stand();
+      return;
+    }
+    if (!gesture) return;
+    const now = performance.now();
+    if (gesture.kind === 'play') {
+      const speed = Math.hypot(e.clientX - gesture.lastX, e.clientY - gesture.lastY) / Math.max(1, now - gesture.lastT) / 1.2;
+      synth.play(...touchXY(e, gesture.fs), speed);
+    } else if (Math.hypot(e.clientX - gesture.x, e.clientY - gesture.y) > 14) {
+      gesture = null; // it is a drag, not a tap
+      return;
+    }
+    gesture.lastX = e.clientX; gesture.lastY = e.clientY; gesture.lastT = now;
+  });
+  const endPointer = (e) => {
+    if (gesture && gesture.kind === 'tap' && performance.now() - gesture.t < 400 && pointers.size === 1) {
+      // tap the floor: stand the figure there (engine hit test when tracking, else a floor plane)
+      let hit = null;
+      if (slam) { const h = slam.hitTest(e.clientX, e.clientY); if (h) { groundOverride = h.y; hit = h; } }
+      if (!hit) hit = groundPoint(e.clientX, e.clientY);
+      if (hit) placeAt(hit.x, hit.z);
+    }
+    pointers.delete(e.pointerId);
+    pinchStart = 0;
+    if (pointers.size === 0) gesture = null;
+  };
+  el.addEventListener('pointerup', endPointer);
+  el.addEventListener('pointercancel', (e) => { pointers.delete(e.pointerId); pinchStart = 0; gesture = null; });
+}
+bindPointer(canvas);
 
 function touchXY(e, fs) {
   return [clamp((e.clientX - (fs.x - fs.r)) / (2 * fs.r), 0, 1), clamp((e.clientY - (fs.y - fs.r)) / (2 * fs.r), 0, 1)];
+}
+
+// ---------------------------------------------------------------- world tracking stage
+
+// The engine owns the camera feed, the camera pose and the render loop: move the figure into its
+// scene and drive our per-frame update from its loop.
+function useSlam(h) {
+  slam = h;
+  fallbackStage.scene.remove(content);
+  h.scene.add(content);
+  scene = h.scene; camera = h.camera; renderer = h.renderer;
+  canvas.style.filter = 'none';
+  canvas.style.display = 'none';
+  video.style.display = 'none';
+  canvas = h.canvas;
+  bindPointer(canvas);
+  uniforms.uPixelRatio.value = h.canvas.width / window.innerWidth;
+  tracker.enabled = false;
+  $('c-track').checked = false; $('c-track').disabled = true;   // no visual tracker needed
+  $('s-glow').disabled = true;                                   // the CSS halo does not apply over the engine's picture
+  groundOverride = null;
+  hasStencil = !!renderer.getContext().getContextAttributes().stencil;
+  if (figure?.shadowMeshObj) figure.shadowMeshObj.material = shadowMat();
+  recenter();
+}
+
+function slamUpdate() {
+  renderer.clearStencil(); // the engine renders with autoClear off: reset the shadow's stencil each frame
+  update();
 }
 
 // ---------------------------------------------------------------- start
@@ -377,10 +431,19 @@ async function start() {
 
   audio.init(); // synchronous, inside the tap
 
-  // iOS requires the motion permission request to come straight from the gesture
+  // 1) world tracking (6DoF) through the engine; it opens the camera itself.
+  //    Started first so its permission prompts come straight from the tap.
+  let slamOk = false;
+  try {
+    slamOk = !!(await startSlam({ cameraY: CAM_START_Y, onReady: useSlam, onUpdate: slamUpdate, onError: (e) => setStatus('SLAM: ' + (e?.message || e)) }));
+  } catch (e) { console.warn('[AstralMesh] SLAM failed to start', e); }
+
+  // 2) otherwise our own rotation-only tracking
   let gyroOk = false;
-  try { gyroOk = await gyro.enable(); } catch { problems.push('movimiento'); }
-  try { await enableCamera(); } catch { problems.push('cámara'); }
+  if (!slamOk) {
+    try { gyroOk = await gyro.enable(); } catch { problems.push('movimiento'); }
+    try { await enableCamera(); } catch { problems.push('cámara'); }
+  }
   let micOk = true;
   try { await audio.useMic(); } catch { micOk = false; problems.push('micrófono'); }
 
@@ -388,7 +451,7 @@ async function start() {
   $('panel').hidden = false;
   $('hud').hidden = false;
   if (!micOk) { audio.useDemo(); $('btn-mic').classList.remove('on'); $('btn-demo').classList.add('on'); }
-  if (!gyroOk) recenter();
+  if (!slamOk && !gyroOk) recenter();
   if (problems.length) setStatus('Sin acceso a: ' + problems.join(', ') + (micOk ? '' : ' · usando demo'));
 }
 
@@ -405,10 +468,15 @@ function adaptQuality(fps, now) {
   else { slowSince = 0; fastSince = 0; }
 }
 
-const grabFrame = () => light.frameFromVideo(video);
-const mapper = () => coverMapper(video.videoWidth, video.videoHeight, window.innerWidth, window.innerHeight);
+const grabFrame = () => (slam ? slam.lumaFrame() : light.frameFromVideo(video));
+const mapper = () => {
+  const f = slam ? slam.lumaFrame() : null;
+  return coverMapper(f ? f.w : video.videoWidth, f ? f.h : video.videoHeight, window.innerWidth, window.innerHeight);
+};
 
-function frame() {
+// everything that happens each frame except drawing, so it runs both in our own loop and
+// inside the engine's loop when world tracking is active
+function update() {
   const dt = Math.min(clock.getDelta(), 0.1);
   const now = performance.now();
   const f = audio.update(dt);
@@ -421,29 +489,34 @@ function frame() {
   if (gen.sway) spin.rotation.y = Math.sin(uniforms.uTime.value * 0.5 * params.speed) * 0.55;
   else if (!gen.dance) spin.rotation.y += dt * params.speed * 0.35 * (1 + f.mid * 1.5);
 
-  if (!gyro.active) { tracker.step(now); if (tracker.enabled) applyTrackerPose(); }
+  if (!slam && !gyro.active) { tracker.step(now); if (tracker.enabled) applyTrackerPose(); }
   camera.updateMatrixWorld();
 
   // light direction from the picture; shadows follow it
-  if (video.videoWidth) light.update(dt, grabFrame, mapper, camera, now);
+  if (slam || video.videoWidth) light.update(dt, grabFrame, mapper, camera, now);
   uniforms.uLightDir.value.copy(light.dir);
   uniforms.uLightStrength.value = light.strength;
+  uniforms.uShadowLuma.value = clamp(light.ambient * 0.4, 0.02, 0.18); // shadow tone follows how bright the scene is
 
   bars.bass.style.transform = `scaleX(${f.bass.toFixed(3)})`;
   bars.mid.style.transform = `scaleX(${f.mid.toFixed(3)})`;
   bars.high.style.transform = `scaleX(${f.high.toFixed(3)})`;
-  renderer.render(scene, camera);
-
   fpsFrames++;
   if (now - fpsLast >= 1000) {
     const fps = Math.round((fpsFrames * 1000) / (now - fpsLast));
-    const lock = gyro.active ? 'giroscopio' : tracker.enabled ? `visual ${tracker.quality}` : 'sin anclaje';
+    const lock = slam ? 'SLAM' : gyro.active ? 'giroscopio' : tracker.enabled ? `visual ${tracker.quality}` : 'sin anclaje';
     const lamp = light.found ? 'farola ✓' : 'luz estimada';
     $('fps').textContent = `${fps} fps · ${Number.isFinite(audio.bassDb) ? Math.round(audio.bassDb) : '--'} dB · ${lock} · ${lamp} · Q${quality}`;
     adaptQuality(fps, now);
     fpsFrames = 0; fpsLast = now;
   }
-  requestAnimationFrame(frame);
+}
+
+function loop() {
+  if (slam) return; // the engine drives rendering now
+  update();
+  renderer.render(scene, camera);
+  requestAnimationFrame(loop);
 }
 
 buildPanel();
@@ -452,11 +525,11 @@ resize();
 rebuild();
 recenter();
 $('btn-start').addEventListener('click', start);
-requestAnimationFrame(frame);
+requestAnimationFrame(loop);
 
 // hook for automated checks
 window.__astral = {
-  audio, params, camera, tracker, content, light, synth, uniforms, mats, scene, renderer,
+  get slam() { return slam; }, audio, params, camera, tracker, content, light, synth, uniforms, mats, scene, renderer,
   get gyroActive() { return gyro.active; }, get figure() { return figure; }, get quality() { return quality; },
   setQuality(q) { quality = q; applyQuality(); }, start,
 };

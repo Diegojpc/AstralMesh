@@ -28,6 +28,9 @@
   <button id="btn-start">Iniciar</button>
   <p class="hint">Te pediré permiso para la <b>cámara</b>, el <b>micrófono</b> y el <b>movimiento</b>. Todo se procesa en tu dispositivo.</p>
   <p id="start-error" class="error" hidden></p>
+  <p class="legal">Seguimiento 3D: motor 8th Wall, &copy; 2026 Niantic Spatial, Inc., creador del software. Licenciado bajo el
+  <a href="https://github.com/8thwall/engine/blob/main/LICENSE" target="_blank" rel="noopener">XR Engine License Agreement</a>
+  y proporcionado &laquo;tal cual&raquo;, sin garant&iacute;as de ning&uacute;n tipo.</p>
 </section>
 
 <section id="panel" hidden>
@@ -54,9 +57,14 @@
     <label class="check">Estimar luz de la escena <input id="c-light" type="checkbox" checked></label>
     <label class="check">Tocar la figura = sonido <input id="c-synth" type="checkbox" checked></label>
     <label class="check">Retroalimentación sonido → figura <input id="c-feedback" type="checkbox" checked></label>
+    <p class="legal">Seguimiento 3D: motor 8th Wall, &copy; 2026 Niantic Spatial, Inc. Licencia: <a href="https://github.com/8thwall/engine/blob/main/LICENSE" target="_blank" rel="noopener">XR Engine License Agreement</a>. Software proporcionado &laquo;tal cual&raquo;, sin garant&iacute;as.</p>
   </div>
 </section>
 
+<!-- 8th Wall engine (world tracking), pinned and integrity-checked; used unmodified under its licence -->
+<script async crossorigin="anonymous" data-preload-chunks="slam"
+  src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1.0.0/dist/xr.js"
+  integrity="sha384-sH8AXfEATN+EQxSgGL852nRJGeh567wcA55RkkDGgi0cWoE5Zh0Mi8c2bxsLZuya"></script>
 <script type="module" src="app.js"></script>
 </body>
 </html>

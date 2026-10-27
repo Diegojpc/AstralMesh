@@ -15,6 +15,7 @@ export function makeUniforms(THREE) {
     uGround: { value: -1.15 },                     // world y of the floor
     uLightDir: { value: new THREE.Vector3(0.25, 0.9, 0.35).normalize() }, // towards the light
     uLightStrength: { value: 0.4 },
+    uShadowLuma: { value: 0.08 },                  // shadow brightness for the min-blend variant
     uSize: { value: 8 },
     uPixelRatio: { value: 1 },
   };
@@ -206,6 +207,13 @@ const FRAG_SHADOW_MESH = /* glsl */ `
   void main() { gl_FragColor = vec4(0.0, 0.0, 0.0, 0.4 + 0.3 * uLightStrength); }
 `;
 
+// Shadow variant for renderers with no stencil buffer (the engine's): every pixel is darkened to
+// one level with min-blending, so overlapping projected triangles do not stack.
+const FRAG_SHADOW_MESH_MIN = /* glsl */ `
+  uniform float uShadowLuma;
+  void main() { gl_FragColor = vec4(vec3(uShadowLuma), 1.0); }
+`;
+
 export function createMaterials(THREE, uniforms) {
   const additive = {
     transparent: true, depthWrite: false, depthTest: false,
@@ -225,7 +233,13 @@ export function createMaterials(THREE, uniforms) {
 
   // fuzz haze: same shader as the node points but its own, smaller size
   const fuzzUniforms = { ...uniforms, uSize: { value: 2.6 } };
+  const shadowMeshMin = sm(VERT_SHADOW_MESH, FRAG_SHADOW_MESH_MIN, {
+    transparent: true, depthWrite: false, depthTest: false,
+    blending: THREE.CustomBlending, blendEquation: THREE.MinEquation, blendSrc: THREE.OneFactor, blendDst: THREE.OneFactor,
+  });
+
   return {
+    shadowMeshMin,
     fuzz: new THREE.ShaderMaterial({ uniforms: fuzzUniforms, vertexShader: VERT_LINE, fragmentShader: FRAG_POINT, ...additive }),
     line: sm(VERT_LINE, FRAG_LINE, additive),
     point: sm(VERT_LINE, FRAG_POINT, additive),

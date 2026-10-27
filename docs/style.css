@@ -22,14 +22,14 @@ html, body {
   touch-action: none;
 }
 
-#cam, #gl {
+#cam, #gl, #xrcanvas {
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
 }
 #cam { object-fit: cover; background: #000; }
-#gl { touch-action: none; }
+#gl, #xrcanvas { touch-action: none; }
 
 #start {
   position: fixed;
@@ -147,3 +147,6 @@ html, body {
 
 #panel label.check { grid-template-columns: 1fr auto; }
 #panel input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--accent); }
+
+#start .legal, #panel .legal { font-size: 11px; opacity: 0.45; max-width: 36ch; margin: 6px 0 0; }
+#start .legal a, #panel .legal a { color: inherit; }

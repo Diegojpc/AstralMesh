@@ -144,3 +144,6 @@ html, body {
 }
 
 #fps { font-size: 11px; opacity: 0.6; }
+
+#panel label.check { grid-template-columns: 1fr auto; }
+#panel input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--accent); }

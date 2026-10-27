@@ -119,7 +119,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &94530311
+--- !u!1 &17465357
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,51 +127,62 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 94530314}
-  - component: {fileID: 94530313}
-  - component: {fileID: 94530312}
+  - component: {fileID: 17465360}
+  - component: {fileID: 17465359}
+  - component: {fileID: 17465358}
   m_Layer: 0
-  m_Name: Interaction
+  m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &94530312
+--- !u!114 &17465358
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 94530311}
+  m_GameObject: {fileID: 17465357}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 91f069be3fe5f62c49cd4078530de9d8, type: 3}
+  m_Script: {fileID: 11500000, guid: 70914e193910dd38b80a6b1b18e85ddf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.Control.GestureController
-  content: {fileID: 815534517}
---- !u!114 &94530313
+  m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.UI.ControlPanel
+  bus: {fileID: 862404400}
+  mandala: {fileID: 1796390536}
+  audioInput: {fileID: 862404399}
+  engine: {fileID: 862404397}
+--- !u!114 &17465359
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 94530311}
+  m_GameObject: {fileID: 17465357}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ba9a20366cdd5930937786626e0f41d, type: 3}
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
-  m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.AR.ARPlacementController
-  raycaster: {fileID: 571800618}
-  content: {fileID: 815534517}
-  arCamera: {fileID: 1154331732}
---- !u!4 &94530314
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: 5805c2a3af9784630b47a3e73fa363b3, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 0}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &17465360
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 94530311}
+  m_GameObject: {fileID: 17465357}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -180,7 +191,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &255260997
+--- !u!1 &129724036
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -188,39 +199,37 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 255260999}
-  - component: {fileID: 255260998}
+  - component: {fileID: 129724038}
+  - component: {fileID: 129724037}
   m_Layer: 0
-  m_Name: Post Volume
+  m_Name: AR Session
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &255260998
+--- !u!114 &129724037
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 255260997}
+  m_GameObject: {fileID: 129724036}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Script: {fileID: 11500000, guid: 3859a92a05d4f5d418cb6ca605290e74, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
-  m_IsGlobal: 1
-  priority: 0
-  blendDistance: 0
-  weight: 1
-  sharedProfile: {fileID: 11400000, guid: 33b28c28754909364b803020783843e1, type: 2}
---- !u!4 &255260999
+  m_EditorClassIdentifier: Unity.XR.ARFoundation::UnityEngine.XR.ARFoundation.ARSession
+  m_AttemptUpdate: 1
+  m_MatchFrameRate: 1
+  m_TrackingMode: 2
+--- !u!4 &129724038
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 255260997}
+  m_GameObject: {fileID: 129724036}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -229,7 +238,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &358030096
+--- !u!1 &423315085
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -237,43 +246,11 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 358030097}
-  m_Layer: 0
-  m_Name: Camera Offset
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &358030097
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 358030096}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1154331738}
-  m_Father: {fileID: 571800617}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &571800616
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 571800617}
-  - component: {fileID: 571800621}
-  - component: {fileID: 571800618}
-  - component: {fileID: 571800620}
-  - component: {fileID: 571800619}
+  - component: {fileID: 423315086}
+  - component: {fileID: 423315090}
+  - component: {fileID: 423315088}
+  - component: {fileID: 423315089}
+  - component: {fileID: 423315087}
   m_Layer: 0
   m_Name: XR Origin
   m_TagString: Untagged
@@ -281,45 +258,29 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &571800617
+--- !u!4 &423315086
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 571800616}
+  m_GameObject: {fileID: 423315085}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 358030097}
+  - {fileID: 1053641660}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &571800618
+--- !u!114 &423315087
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 571800616}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa17d122634046b4a8e23048891fafc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.XR.ARFoundation::UnityEngine.XR.ARFoundation.ARRaycastManager
-  <trackablesChanged>k__BackingField:
-    m_PersistentCalls:
-      m_Calls: []
-  m_RaycastPrefab: {fileID: 0}
---- !u!114 &571800619
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 571800616}
+  m_GameObject: {fileID: 423315085}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 728ad7fae8e460a4ba41265c7308d757, type: 3}
@@ -329,13 +290,29 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_AnchorPrefab: {fileID: 0}
---- !u!114 &571800620
+--- !u!114 &423315088
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 571800616}
+  m_GameObject: {fileID: 423315085}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa17d122634046b4a8e23048891fafc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.XR.ARFoundation::UnityEngine.XR.ARFoundation.ARRaycastManager
+  <trackablesChanged>k__BackingField:
+    m_PersistentCalls:
+      m_Calls: []
+  m_RaycastPrefab: {fileID: 0}
+--- !u!114 &423315089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 423315085}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1760703bbd54c04488a8d10600262ab, type: 3}
@@ -346,24 +323,24 @@ MonoBehaviour:
       m_Calls: []
   m_PlanePrefab: {fileID: 0}
   m_DetectionMode: -1
---- !u!114 &571800621
+--- !u!114 &423315090
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 571800616}
+  m_GameObject: {fileID: 423315085}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e0cb9aa70a22847b5925ee5f067c10a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.XR.CoreUtils::Unity.XR.CoreUtils.XROrigin
-  m_Camera: {fileID: 1154331732}
-  m_OriginBaseGameObject: {fileID: 571800616}
-  m_CameraFloorOffsetObject: {fileID: 358030096}
+  m_Camera: {fileID: 1342816466}
+  m_OriginBaseGameObject: {fileID: 423315085}
+  m_CameraFloorOffsetObject: {fileID: 1053641659}
   m_RequestedTrackingOriginMode: 1
   m_CameraYOffset: 1.1176
---- !u!1 &644919028
+--- !u!1 &771128587
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -371,11 +348,59 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 644919033}
-  - component: {fileID: 644919030}
-  - component: {fileID: 644919032}
-  - component: {fileID: 644919029}
-  - component: {fileID: 644919031}
+  - component: {fileID: 771128589}
+  - component: {fileID: 771128588}
+  m_Layer: 0
+  m_Name: Environment
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &771128588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 771128587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 928069c387b56e59ea302a5516c9d1d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.AR.AstralEnvironment
+  cameraManager: {fileID: 1342816470}
+  planeManager: {fileID: 423315089}
+  phoneHeight: 1.35
+  defaultLightDir: {x: 0.25, y: 0.9, z: 0.35}
+--- !u!4 &771128589
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 771128587}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &862404396
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 862404401}
+  - component: {fileID: 862404398}
+  - component: {fileID: 862404397}
+  - component: {fileID: 862404399}
+  - component: {fileID: 862404400}
   m_Layer: 0
   m_Name: Systems
   m_TagString: Untagged
@@ -383,26 +408,26 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &644919029
+--- !u!114 &862404397
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 644919028}
+  m_GameObject: {fileID: 862404396}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f402c9b20689a8652916312bffcca9ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 8db2cb1a652e58562a5112cd9f0cdb4d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.Audio.AudioInputController
-  source: {fileID: 644919030}
---- !u!82 &644919030
+  m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.Audio.AudioReactiveEngine
+  source: {fileID: 862404398}
+--- !u!82 &862404398
 AudioSource:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 644919028}
+  m_GameObject: {fileID: 862404396}
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
@@ -493,13 +518,26 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &644919031
+--- !u!114 &862404399
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 644919028}
+  m_GameObject: {fileID: 862404396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f402c9b20689a8652916312bffcca9ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.Audio.AudioInputController
+  source: {fileID: 862404398}
+--- !u!114 &862404400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862404396}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01218cd3de7959e0d833da0a0dd4c565, type: 3}
@@ -511,29 +549,21 @@ MonoBehaviour:
     speed: 1
     deform: 0.5
     density: 4
-  Palette: {fileID: 11400000, guid: 82f915d978130109f95a9bbc6b5d0b09, type: 2}
---- !u!114 &644919032
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 644919028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8db2cb1a652e58562a5112cd9f0cdb4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.Audio.AudioReactiveEngine
-  source: {fileID: 644919030}
-  release: 0.88
-  gainDecay: 0.995
---- !u!4 &644919033
+  palettes:
+  - {fileID: 11400000, guid: 82f915d978130109f95a9bbc6b5d0b09, type: 2}
+  - {fileID: 11400000, guid: bee32fcd48f36999abd19c3ded999a7b, type: 2}
+  - {fileID: 11400000, guid: d288f505b8cf79ffeb8174ff2fb317b2, type: 2}
+  - {fileID: 11400000, guid: 1384ec1b1e6e6c3cd91b31667b1fde29, type: 2}
+  - {fileID: 11400000, guid: f210b2cf85eaad8de960345b5e94a2a8, type: 2}
+  - {fileID: 11400000, guid: 618ba1c87f361590c85e1c0c419a78e7, type: 2}
+  - {fileID: 11400000, guid: 7bdb60c66283ee4928af64b3cd099f24, type: 2}
+--- !u!4 &862404401
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 644919028}
+  m_GameObject: {fileID: 862404396}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -542,7 +572,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &815534515
+--- !u!1 &1053641659
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -550,104 +580,31 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 815534517}
-  - component: {fileID: 815534519}
-  - component: {fileID: 815534518}
-  - component: {fileID: 815534516}
+  - component: {fileID: 1053641660}
   m_Layer: 0
-  m_Name: Mandala
+  m_Name: Camera Offset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &815534516
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 815534515}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b891aee39cb79d9ab5aaabd9f9e044f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.Geometry.MandalaRenderer
-  bus: {fileID: 644919031}
-  wireMaterial: {fileID: 2100000, guid: 6a3343c9068ec21f0951584ad5c7fa3d, type: 2}
---- !u!4 &815534517
+--- !u!4 &1053641660
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 815534515}
+  m_GameObject: {fileID: 1053641659}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
+  m_Children:
+  - {fileID: 1342816472}
+  m_Father: {fileID: 423315086}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &815534518
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 815534515}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &815534519
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 815534515}
-  m_Mesh: {fileID: 0}
---- !u!1 &1154331731
+--- !u!1 &1342816465
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -655,13 +612,13 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1154331738}
-  - component: {fileID: 1154331732}
-  - component: {fileID: 1154331737}
-  - component: {fileID: 1154331736}
-  - component: {fileID: 1154331735}
-  - component: {fileID: 1154331734}
-  - component: {fileID: 1154331733}
+  - component: {fileID: 1342816472}
+  - component: {fileID: 1342816466}
+  - component: {fileID: 1342816471}
+  - component: {fileID: 1342816470}
+  - component: {fileID: 1342816469}
+  - component: {fileID: 1342816468}
+  - component: {fileID: 1342816467}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -669,13 +626,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!20 &1154331732
+--- !u!20 &1342816466
 Camera:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1154331731}
+  m_GameObject: {fileID: 1342816465}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
@@ -720,13 +677,13 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!114 &1154331733
+--- !u!114 &1342816467
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1154331731}
+  m_GameObject: {fileID: 1342816465}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
@@ -764,13 +721,13 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!114 &1154331734
+--- !u!114 &1342816468
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1154331731}
+  m_GameObject: {fileID: 1342816465}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2fadf230d1919748a9aa21d40f74619, type: 3}
@@ -785,12 +742,12 @@ MonoBehaviour:
       m_Name: Position
       m_Type: 0
       m_ExpectedControlType: 
-      m_Id: af3cd07d-169c-4ce9-89fb-9c6e35e6490f
+      m_Id: 2d7a0819-98cc-4520-b665-07094ff5581d
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings:
       - m_Name: 
-        m_Id: 51bb090c-956c-4832-b247-57ed49d80ada
+        m_Id: de03c478-df0f-473f-a1f5-717e153a6e70
         m_Path: <HandheldARInputDevice>/devicePosition
         m_Interactions: 
         m_Processors: 
@@ -806,12 +763,12 @@ MonoBehaviour:
       m_Name: Rotation
       m_Type: 0
       m_ExpectedControlType: 
-      m_Id: 3d25d66b-4abb-472b-95fe-e68a1f6dc144
+      m_Id: 6cfb9481-d5e9-46d6-b86c-7ff9604458b2
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings:
       - m_Name: 
-        m_Id: c0d80d59-360b-4d5c-af1c-b28e5ee913c7
+        m_Id: 5b402bb8-2a83-40e9-a7f5-ad5d9b6b5b4a
         m_Path: <HandheldARInputDevice>/deviceRotation
         m_Interactions: 
         m_Processors: 
@@ -827,7 +784,7 @@ MonoBehaviour:
       m_Name: Tracking State
       m_Type: 0
       m_ExpectedControlType: Integer
-      m_Id: 32b29cd2-3f79-400f-bac1-114ca855075e
+      m_Id: d61970b9-eb4e-4f74-b2c5-2565dcbb9490
       m_Processors: 
       m_Interactions: 
       m_SingletonActionBindings: []
@@ -838,7 +795,7 @@ MonoBehaviour:
     m_Name: 
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: 97b704b7-8a8f-4e7c-bd4a-455f2251942f
+    m_Id: 9aac97d5-03f2-4d87-8a21-1ab580ef98e7
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
@@ -848,19 +805,19 @@ MonoBehaviour:
     m_Name: 
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: d79608e1-eb47-437c-89d6-0ee8236bb9e3
+    m_Id: bbbe6ea5-3b76-411e-9315-13ba71d1c112
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
     m_Flags: 0
     m_Priority: 0
---- !u!114 &1154331735
+--- !u!114 &1342816469
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1154331731}
+  m_GameObject: {fileID: 1342816465}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 816b289ef451e094f9ae174fb4cf8db0, type: 3}
@@ -868,13 +825,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.XR.ARFoundation::UnityEngine.XR.ARFoundation.ARCameraBackground
   m_UseCustomMaterial: 0
   m_CustomMaterial: {fileID: 0}
---- !u!114 &1154331736
+--- !u!114 &1342816470
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1154331731}
+  m_GameObject: {fileID: 1342816465}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4966719baa26e4b0e8231a24d9bd491a, type: 3}
@@ -884,33 +841,33 @@ MonoBehaviour:
   m_LightEstimationMode: 0
   m_AutoFocus: 1
   m_ImageStabilization: 0
-  m_LightEstimation: 0
+  m_LightEstimation: 24
   m_FacingDirection: 1
   m_RenderMode: 0
---- !u!81 &1154331737
+--- !u!81 &1342816471
 AudioListener:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1154331731}
+  m_GameObject: {fileID: 1342816465}
   m_Enabled: 1
---- !u!4 &1154331738
+--- !u!4 &1342816472
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1154331731}
+  m_GameObject: {fileID: 1342816465}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 358030097}
+  m_Father: {fileID: 1053641660}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1302142575
+--- !u!1 &1730357864
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -918,65 +875,39 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1302142578}
-  - component: {fileID: 1302142577}
-  - component: {fileID: 1302142576}
+  - component: {fileID: 1730357866}
+  - component: {fileID: 1730357865}
   m_Layer: 0
-  m_Name: UI
+  m_Name: Post Volume
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1302142576
+--- !u!114 &1730357865
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1302142575}
+  m_GameObject: {fileID: 1730357864}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70914e193910dd38b80a6b1b18e85ddf, type: 3}
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.UI.ControlPanel
-  bus: {fileID: 644919031}
-  mandala: {fileID: 815534516}
-  palettes:
-  - {fileID: 11400000, guid: 82f915d978130109f95a9bbc6b5d0b09, type: 2}
-  - {fileID: 11400000, guid: d288f505b8cf79ffeb8174ff2fb317b2, type: 2}
-  - {fileID: 11400000, guid: 1384ec1b1e6e6c3cd91b31667b1fde29, type: 2}
-  audioInput: {fileID: 644919029}
---- !u!114 &1302142577
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1302142575}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: 5805c2a3af9784630b47a3e73fa363b3, type: 2}
-  m_ParentUI: {fileID: 0}
-  sourceAsset: {fileID: 0}
-  m_SortingOrder: 0
-  m_Position: 0
-  m_WorldSpaceSizeMode: 1
-  m_WorldSpaceWidth: 1920
-  m_WorldSpaceHeight: 1080
-  m_PivotReferenceSize: 0
-  m_Pivot: 0
-  m_WorldSpaceCollider: {fileID: 0}
---- !u!4 &1302142578
+  m_EditorClassIdentifier: Unity.RenderPipelines.Core.Runtime::UnityEngine.Rendering.Volume
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 33b28c28754909364b803020783843e1, type: 2}
+--- !u!4 &1730357866
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1302142575}
+  m_GameObject: {fileID: 1730357864}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -985,7 +916,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1918197840
+--- !u!1 &1796390535
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -993,37 +924,104 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1918197842}
-  - component: {fileID: 1918197841}
+  - component: {fileID: 1796390537}
+  - component: {fileID: 1796390536}
   m_Layer: 0
-  m_Name: AR Session
+  m_Name: Mandala
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1918197841
+--- !u!114 &1796390536
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1918197840}
+  m_GameObject: {fileID: 1796390535}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3859a92a05d4f5d418cb6ca605290e74, type: 3}
+  m_Script: {fileID: 11500000, guid: 5b891aee39cb79d9ab5aaabd9f9e044f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Unity.XR.ARFoundation::UnityEngine.XR.ARFoundation.ARSession
-  m_AttemptUpdate: 1
-  m_MatchFrameRate: 1
-  m_TrackingMode: 2
---- !u!4 &1918197842
+  m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.Geometry.MandalaRenderer
+  bus: {fileID: 862404400}
+  wireMat: {fileID: 2100000, guid: 6a3343c9068ec21f0951584ad5c7fa3d, type: 2}
+  pointMat: {fileID: 2100000, guid: 0b59751bf5f2ff674a7f33526f18f9c6, type: 2}
+  flakeMat: {fileID: 2100000, guid: 928ee3c82566424be8d55aba42c5a354, type: 2}
+  bodyMat: {fileID: 2100000, guid: 35acc705737e6029e97c7b41ef6287f0, type: 2}
+  shadowBodyMat: {fileID: 2100000, guid: d45092d0f9ad87758b9081d187751c29, type: 2}
+  shadowLineMat: {fileID: 2100000, guid: b2dafd50dbb83b05c9e3ccab0e718feb, type: 2}
+  shadowPointMat: {fileID: 2100000, guid: eb82cf0a1fc96aa368b9b88de9e140f6, type: 2}
+--- !u!4 &1796390537
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1918197840}
+  m_GameObject: {fileID: 1796390535}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1967553666
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1967553669}
+  - component: {fileID: 1967553668}
+  - component: {fileID: 1967553667}
+  m_Layer: 0
+  m_Name: Interaction
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1967553667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967553666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91f069be3fe5f62c49cd4078530de9d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.Control.GestureController
+  content: {fileID: 1796390537}
+--- !u!114 &1967553668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967553666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ba9a20366cdd5930937786626e0f41d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.AR.ARPlacementController
+  raycaster: {fileID: 423315088}
+  anchors: {fileID: 423315087}
+  mandala: {fileID: 1796390536}
+  arCamera: {fileID: 1342816466}
+--- !u!4 &1967553669
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967553666}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -1036,10 +1034,11 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1918197842}
-  - {fileID: 571800617}
-  - {fileID: 255260999}
-  - {fileID: 644919033}
-  - {fileID: 815534517}
-  - {fileID: 94530314}
-  - {fileID: 1302142578}
+  - {fileID: 129724038}
+  - {fileID: 423315086}
+  - {fileID: 1730357866}
+  - {fileID: 862404401}
+  - {fileID: 771128589}
+  - {fileID: 1796390537}
+  - {fileID: 1967553669}
+  - {fileID: 17465360}

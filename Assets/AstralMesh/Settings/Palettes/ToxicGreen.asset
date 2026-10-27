@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: AstralMesh.Runtime::AstralMesh.Control.PaletteSO
   colorA: {r: 0.4, g: 2, b: 0.8, a: 2}
   colorB: {r: 0, g: 1.8, b: 2, a: 2}
+  colorC: {r: 1.4, g: 2, b: 0.4, a: 2}
+  rainbow: 0

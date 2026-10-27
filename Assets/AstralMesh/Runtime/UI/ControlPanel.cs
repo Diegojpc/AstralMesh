@@ -1,19 +1,22 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using AstralMesh.Audio;
 using AstralMesh.Control;
 using AstralMesh.Geometry;
-using AstralMesh.Audio;
 
 namespace AstralMesh.UI
 {
-    /// <summary>Builds the overlay in code so there is no UXML dependency to keep in sync.</summary>
+    /// <summary>Builds the overlay in code, so there is no UXML to keep in sync.</summary>
     [RequireComponent(typeof(UIDocument))]
     public sealed class ControlPanel : MonoBehaviour
     {
         [SerializeField] ReactiveParameterBus bus;
         [SerializeField] MandalaRenderer mandala;
-        [SerializeField] PaletteSO[] palettes;
         [SerializeField] AudioInputController audioInput;
+        [SerializeField] AudioReactiveEngine engine;
+
+        DropdownField geoDropdown, palDropdown;
 
         void OnEnable()
         {
@@ -30,30 +33,40 @@ namespace AstralMesh.UI
 #endif
             panel.Add(row);
 
-            var geo = new DropdownField("Geometry", new System.Collections.Generic.List<string>(mandala.GeneratorNames), 0);
-            geo.RegisterValueChangedCallback(e => mandala.SelectGeometry(geo.index));
-            panel.Add(geo);
+            geoDropdown = new DropdownField("Geometry", new List<string>(mandala.GeneratorNames), mandala.Current);
+            geoDropdown.RegisterValueChangedCallback(e => mandala.SelectGeometry(geoDropdown.index));
+            panel.Add(geoDropdown);
 
-            if (palettes != null && palettes.Length > 0)
-            {
-                var names = new System.Collections.Generic.List<string>();
-                foreach (var p in palettes) names.Add(p.name);
-                var pal = new DropdownField("Palette", names, 0);
-                bus.Palette = palettes[0];
-                pal.RegisterValueChangedCallback(e => bus.Palette = palettes[pal.index]);
-                panel.Add(pal);
-            }
+            var names = new List<string>();
+            foreach (var p in bus.Palettes) names.Add(p.name);
+            palDropdown = new DropdownField("Palette", names, Mathf.Max(0, bus.PaletteIndex));
+            palDropdown.RegisterValueChangedCallback(e => bus.SelectPalette(palDropdown.index));
+            panel.Add(palDropdown);
 
             Slider(panel, "Expand", 0, 2, bus.Params.expand, v => bus.Params.expand = v);
             Slider(panel, "Twist", 0, 4, bus.Params.twist, v => bus.Params.twist = v);
             Slider(panel, "Speed", 0, 3, bus.Params.speed, v => bus.Params.speed = v);
             Slider(panel, "Deform", 0, 2, bus.Params.deform, v => bus.Params.deform = v);
+            Slider(panel, "Sensitivity", 0.5f, 3f, engine != null ? engine.Sensitivity : 1.4f, v => { if (engine != null) engine.Sensitivity = v; });
 
             var density = new SliderInt("Density", 2, 6) { value = bus.Params.density };
             density.RegisterValueChangedCallback(e => bus.Params.density = e.newValue);
             density.RegisterCallback<PointerCaptureOutEvent>(_ => bus.CommitDensity());
             panel.Add(density);
+
+            bus.PaletteChanged += OnPaletteChanged;
+            mandala.GeometryChanged += OnGeometryChanged;
         }
+
+        void OnDisable()
+        {
+            bus.PaletteChanged -= OnPaletteChanged;
+            mandala.GeometryChanged -= OnGeometryChanged;
+        }
+
+        // keep the dropdowns in step when the figure or palette changes from code / the launch intent
+        void OnPaletteChanged(int i) { if (palDropdown != null) palDropdown.SetValueWithoutNotify(palDropdown.choices[i]); }
+        void OnGeometryChanged(int i) { if (geoDropdown != null) geoDropdown.SetValueWithoutNotify(geoDropdown.choices[i]); }
 
         static void Slider(VisualElement parent, string label, float min, float max, float value, System.Action<float> set)
         {

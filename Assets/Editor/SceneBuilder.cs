@@ -25,7 +25,10 @@ public static class SceneBuilder
 {
     const string Root = "Assets/AstralMesh";
     const string ScenePath = Root + "/Scenes/Main.unity";
-    static readonly string[] PaletteNames = { "NeonMagentaGreen", "ElectricPink", "ToxicGreen" };
+    // same order as PALETTES in docs/app.js and the Palette index of each FigureDef
+    static readonly string[] PaletteNames = { "NeonMagentaGreen", "MagentaCyan", "ElectricPink", "ToxicGreen", "NeonRainbow", "InkWhite", "GreenMagentaBlue" };
+    // line, points, flakes, solid body, then the three shadow variants
+    static readonly string[] MaterialNames = { "MandalaWire", "MandalaPoints", "MandalaFlakes", "MandalaBody", "ShadowBody", "ShadowLines", "ShadowPoints" };
 
     [MenuItem("AstralMesh/Build Scene and Settings")]
     public static void Build()
@@ -37,10 +40,10 @@ public static class SceneBuilder
         SetupPlayerSettings();
         SetupXR();
         var volumeProfile = SetupURP();
-        var material = CreateMaterial();
+        CreateMaterials();
         var palettes = CreatePalettes();
         var panelSettings = CreatePanelSettings();
-        CreateScene(volumeProfile, material, palettes, panelSettings);
+        CreateScene(volumeProfile, palettes, panelSettings);
 
         EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
         AssetDatabase.SaveAssets();
@@ -143,24 +146,40 @@ public static class SceneBuilder
         return profile;
     }
 
-    static Material CreateMaterial()
+    static void CreateMaterials()
     {
-        var path = Root + "/Materials/MandalaWire.mat";
-        AssetDatabase.DeleteAsset(path);
-        var shader = Shader.Find("AstralMesh/MandalaWire");
-        if (shader == null) throw new System.Exception("Shader AstralMesh/MandalaWire not found");
-        var mat = new Material(shader) { name = "MandalaWire" };
-        AssetDatabase.CreateAsset(mat, path);
-        return mat;
+        Material Make(string name, string shaderName, System.Action<Material> setup = null)
+        {
+            var path = $"{Root}/Materials/{name}.mat";
+            AssetDatabase.DeleteAsset(path);
+            var shader = Shader.Find(shaderName);
+            if (shader == null) throw new System.Exception($"Shader {shaderName} not found");
+            var mat = new Material(shader) { name = name };
+            setup?.Invoke(mat);
+            AssetDatabase.CreateAsset(mat, path);
+            return mat;
+        }
+        Make("MandalaWire", "AstralMesh/MandalaWire");
+        Make("MandalaPoints", "AstralMesh/MandalaWire", m => m.SetFloat("_PointSize", 6f));
+        Make("MandalaFlakes", "AstralMesh/MandalaWire", m => { m.SetFloat("_PointSize", 6f); m.SetFloat("_Flake", 1f); });
+        Make("MandalaBody", "AstralMesh/MandalaBody");
+        // solid shadow: stencil NotEqual / Replace so overlapping projected triangles darken once
+        Make("ShadowBody", "AstralMesh/MandalaShadow", m => { m.SetFloat("_Kind", 1f); m.SetFloat("_Alpha", 0.6f); m.SetFloat("_StencilComp", 6f); m.SetFloat("_StencilPass", 2f); });
+        Make("ShadowLines", "AstralMesh/MandalaShadow", m => { m.SetFloat("_Kind", 0f); m.SetFloat("_Alpha", 0.35f); });
+        Make("ShadowPoints", "AstralMesh/MandalaShadow", m => { m.SetFloat("_Kind", 2f); m.SetFloat("_Alpha", 0.3f); m.SetFloat("_PointSize", 8f); });
     }
 
     static PaletteSO[] CreatePalettes()
     {
-        (string name, Color a, Color b)[] defs =
+        (string name, Color a, Color b, Color c, bool rainbow)[] defs =
         {
-            ("NeonMagentaGreen", new Color(1f, 0f, 0.8f) * 2f, new Color(0.1f, 1f, 0.3f) * 2f),
-            ("ElectricPink",     new Color(1f, 0.1f, 0.5f) * 2f, new Color(0.9f, 0.2f, 1f) * 2f),
-            ("ToxicGreen",       new Color(0.2f, 1f, 0.4f) * 2f, new Color(0.0f, 0.9f, 1f) * 2f),
+            ("NeonMagentaGreen", new Color(1f, 0f, 0.8f) * 2f, new Color(0.1f, 1f, 0.3f) * 2f, new Color(0.1f, 0.4f, 1f) * 2f, false),
+            ("MagentaCyan",      new Color(1f, 0.1f, 0.75f) * 2f, new Color(0f, 0.9f, 1f) * 2f, new Color(1f, 0.9f, 0.1f) * 2f, false),
+            ("ElectricPink",     new Color(1f, 0.1f, 0.5f) * 2f, new Color(0.9f, 0.2f, 1f) * 2f, new Color(0.5f, 0.3f, 1f) * 2f, false),
+            ("ToxicGreen",       new Color(0.2f, 1f, 0.4f) * 2f, new Color(0f, 0.9f, 1f) * 2f, new Color(0.7f, 1f, 0.2f) * 2f, false),
+            ("NeonRainbow",      Color.white * 2f, Color.white * 2f, Color.white * 2f, true),
+            ("InkWhite",         Color.white * 2f, new Color(0.55f, 0.85f, 1f) * 2f, new Color(0.8f, 0.9f, 1f) * 2f, false),
+            ("GreenMagentaBlue", new Color(0.15f, 1f, 0.25f) * 2f, new Color(1f, 0.1f, 0.8f) * 2f, new Color(0.1f, 0.4f, 1f) * 2f, false),
         };
         var list = new PaletteSO[defs.Length];
         for (int i = 0; i < defs.Length; i++)
@@ -168,7 +187,7 @@ public static class SceneBuilder
             var path = $"{Root}/Settings/Palettes/{defs[i].name}.asset";
             AssetDatabase.DeleteAsset(path);
             var p = ScriptableObject.CreateInstance<PaletteSO>();
-            p.colorA = defs[i].a; p.colorB = defs[i].b;
+            p.colorA = defs[i].a; p.colorB = defs[i].b; p.colorC = defs[i].c; p.rainbow = defs[i].rainbow;
             AssetDatabase.CreateAsset(p, path);
             list[i] = p;
         }
@@ -187,7 +206,7 @@ public static class SceneBuilder
         return ps;
     }
 
-    static void CreateScene(VolumeProfile volumeProfile, Material material, PaletteSO[] palettes, PanelSettings panelSettings)
+    static void CreateScene(VolumeProfile volumeProfile, PaletteSO[] palettes, PanelSettings panelSettings)
     {
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
@@ -195,12 +214,13 @@ public static class SceneBuilder
         // Reload everything from disk before wiring it into the scene.
         AssetDatabase.SaveAssets();
         volumeProfile = AssetDatabase.LoadAssetAtPath<VolumeProfile>(Root + "/Settings/AstralVolume.asset");
-        material = AssetDatabase.LoadAssetAtPath<Material>(Root + "/Materials/MandalaWire.mat");
+        var mats = new Material[MaterialNames.Length];
+        for (int i = 0; i < mats.Length; i++) mats[i] = AssetDatabase.LoadAssetAtPath<Material>($"{Root}/Materials/{MaterialNames[i]}.mat");
         panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(Root + "/Settings/PanelSettings.asset");
         palettes = new PaletteSO[PaletteNames.Length];
         for (int i = 0; i < palettes.Length; i++)
             palettes[i] = AssetDatabase.LoadAssetAtPath<PaletteSO>($"{Root}/Settings/Palettes/{PaletteNames[i]}.asset");
-        if (volumeProfile == null || material == null || panelSettings == null || System.Array.IndexOf(palettes, null) >= 0)
+        if (volumeProfile == null || panelSettings == null || System.Array.IndexOf(mats, null) >= 0 || System.Array.IndexOf(palettes, null) >= 0)
             throw new System.Exception("[AstralMesh] Failed to reload generated assets from disk");
 
         new GameObject("AR Session", typeof(ARSession));
@@ -242,19 +262,28 @@ public static class SceneBuilder
         SetRef(systems.GetComponent<AudioReactiveEngine>(), "source", audioSource);
         SetRef(systems.GetComponent<AudioInputController>(), "source", audioSource);
         var bus = systems.GetComponent<ReactiveParameterBus>();
-        bus.Palette = palettes[0];
+        SetRefArray(bus, "palettes", palettes);
 
-        // Content
-        var mandalaGo = new GameObject("Mandala", typeof(MeshFilter), typeof(MeshRenderer), typeof(MandalaRenderer));
+        // Floor and light (ARCore planes and main-light estimate on a device; fixed values otherwise)
+        var env = new GameObject("Environment", typeof(AstralEnvironment));
+        var camMgr = camGo.GetComponent<ARCameraManager>();
+        camMgr.requestedLightEstimation = LightEstimation.MainLightDirection | LightEstimation.MainLightIntensity;
+        SetRef(env.GetComponent<AstralEnvironment>(), "cameraManager", camMgr);
+        SetRef(env.GetComponent<AstralEnvironment>(), "planeManager", originGo.GetComponent<ARPlaneManager>());
+
+        // Content: the figure and its shadows are built at runtime by MandalaRenderer
+        var mandalaGo = new GameObject("Mandala", typeof(MandalaRenderer));
         var mandala = mandalaGo.GetComponent<MandalaRenderer>();
         SetRef(mandala, "bus", bus);
-        SetRef(mandala, "wireMaterial", material);
+        string[] matFields = { "wireMat", "pointMat", "flakeMat", "bodyMat", "shadowBodyMat", "shadowLineMat", "shadowPointMat" };
+        for (int i = 0; i < matFields.Length; i++) SetRef(mandala, matFields[i], mats[i]);
 
         // Interaction
         var interaction = new GameObject("Interaction", typeof(ARPlacementController), typeof(GestureController));
         var placement = interaction.GetComponent<ARPlacementController>();
         SetRef(placement, "raycaster", originGo.GetComponent<ARRaycastManager>());
-        SetRef(placement, "content", mandalaGo.transform);
+        SetRef(placement, "anchors", originGo.GetComponent<ARAnchorManager>());
+        SetRef(placement, "mandala", mandala);
         SetRef(placement, "arCamera", cam);
         SetRef(interaction.GetComponent<GestureController>(), "content", mandalaGo.transform);
 
@@ -265,13 +294,19 @@ public static class SceneBuilder
         SetRef(panel, "bus", bus);
         SetRef(panel, "mandala", mandala);
         SetRef(panel, "audioInput", systems.GetComponent<AudioInputController>());
-        var so = new SerializedObject(panel);
-        var arr = so.FindProperty("palettes");
-        arr.arraySize = palettes.Length;
-        for (int i = 0; i < palettes.Length; i++) arr.GetArrayElementAtIndex(i).objectReferenceValue = palettes[i];
-        so.ApplyModifiedPropertiesWithoutUndo();
+        SetRef(panel, "engine", systems.GetComponent<AudioReactiveEngine>());
 
         EditorSceneManager.SaveScene(scene, ScenePath);
+    }
+
+    static void SetRefArray(Object target, string field, Object[] values)
+    {
+        var so = new SerializedObject(target);
+        var arr = so.FindProperty(field);
+        if (arr == null) throw new System.Exception($"{target.GetType().Name}.{field} not found");
+        arr.arraySize = values.Length;
+        for (int i = 0; i < values.Length; i++) arr.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+        so.ApplyModifiedPropertiesWithoutUndo();
     }
 
     static void SetRef(Object target, string field, Object value)

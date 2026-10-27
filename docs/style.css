@@ -114,7 +114,7 @@ html, body {
   padding: 2px 24px;
   transition: transform 0.2s;
 }
-#panel-body { display: grid; gap: 8px; max-width: 520px; margin: 0 auto; }
+#panel-body { display: grid; gap: 8px; max-width: 520px; margin: 0 auto; max-height: 52vh; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; padding-bottom: 4px; }
 #panel label { display: grid; grid-template-columns: 96px 1fr; align-items: center; font-size: 13px; opacity: 0.95; }
 #panel .row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 #panel .row .btn, #panel .row button {

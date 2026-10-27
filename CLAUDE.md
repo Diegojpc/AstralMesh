@@ -27,6 +27,20 @@ Unity 6000.3.27f1 + URP 17.3 + AR Foundation 6.7 (Android + iOS). Compiles, Edit
 - Android `minSdk` is 29: ARCore "Required" + Vulkan will not build below that.
 - If the Hub GUI will not start with `bwrap: Can't find source path .../pkcs11-flatpak-N`, the Flatpak session helper's p11-kit socket is missing; start `p11-kit server --name <that path>` manually.
 
+## Web version (docs/)
+
+A separate, dependency-free port for phones that cannot run the Unity build (iPhone without a Mac/paid signing). Published with GitHub Pages from `docs/` at https://diegojpc.github.io/AstralMesh/ (public repo). No build step: edit `docs/app.js`, `docs/index.html`, `docs/style.css`, push to `main`.
+
+- `docs/app.js` mirrors the Unity pipeline: `AudioEngine` (Web Audio `AnalyserNode` -> 3 bands -> peak-follower gain -> envelope, spectral-flux kick) -> shader uniforms `uAudio`/`uParams` -> GLSL port of `MandalaWire.shader`. Keep band edges, constants and the shader math in sync with `AudioReactiveEngine.cs` / `MandalaWire.shader`.
+- Three.js is vendored in `docs/vendor/` (v0.160.1, MIT) so the page has no CDN dependency. The canvas is premultiplied-alpha over a `<video>` camera feed, so fragment alpha must follow brightness (alpha 1 on dark pixels paints black squares).
+- iOS Safari rules: `AudioContext` creation/resume and `DeviceOrientationEvent.requestPermission()` must happen synchronously inside the tap handler (`start()`); camera/mic need HTTPS. The mic is never routed to the speaker (feedback). iOS has no WebXR, so "AR" is camera passthrough plus gyro-anchored content (`recenter()`).
+- `Demo` mode synthesizes a kick/pad/hi-hat loop so the visuals can be checked without a mic or file. `window.__astral` is a hook for headless checks.
+- Local check: `python3 -m http.server` in `docs/`, then drive it with `playwright-core` + the Chromium in `~/.cache/ms-playwright`, flags `--use-fake-ui-for-media-stream --use-fake-device-for-media-stream --use-angle=swiftshader --enable-unsafe-swiftshader`, and grant `camera`, `microphone`, `accelerometer`, `gyroscope`, `magnetometer` (without the motion permissions `requestPermission` reads as denied).
+
+## Android emulator
+
+AVD `astral_ar` (Android 14, x86_64, Google APIs) lives in `~/Android/Sdk` (separate from Unity's SDK; `emulator`, `platform-tools`, `cmdline-tools` installed there). Start with `~/Android/Sdk/emulator/emulator -avd astral_ar -gpu host`. Unity's ARCore plugin ships no x86_64 library, so the AR session cannot run there: build with `-executeMethod BuildScript.BuildAndroidEmulator` (x86_64, GLES3, XR init skipped) -> `Builds/AstralMesh-x86_64.apk`. That validates visuals, audio and UI only, never AR.
+
 ## Architecture
 
 Per-frame data flow, in one direction:

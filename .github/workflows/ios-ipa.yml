@@ -1,0 +1,50 @@
+name: iOS unsigned IPA
+
+# Unity generates the Xcode project on Linux (Builds/iOS, ~1 GB, too big for git) and it is
+# published as a zstd tarball in a GitHub Release. This job downloads it, compiles it with
+# Xcode and packages an unsigned .ipa. Re-sign and install it with a sideload tool using your
+# own Apple ID.
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag that holds ios-project.tar.zst"
+        default: "ios-project"
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Download Xcode project
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download "${{ inputs.release_tag }}" --repo "${{ github.repository }}" --pattern ios-project.tar.zst
+          brew list zstd >/dev/null 2>&1 || brew install zstd
+          zstd -d -c ios-project.tar.zst | tar -xf -
+          ls iOS
+
+      - name: Build for device without signing
+        run: |
+          xcodebuild \
+            -project iOS/Unity-iPhone.xcodeproj \
+            -scheme Unity-iPhone \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Package unsigned IPA
+        run: |
+          APP=$(find build/Build/Products/Release-iphoneos -maxdepth 1 -name '*.app' | head -1)
+          echo "App bundle: $APP"
+          mkdir -p Payload
+          cp -R "$APP" Payload/
+          zip -qry AstralMesh-unsigned.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AstralMesh-unsigned-ipa
+          path: AstralMesh-unsigned.ipa

@@ -1,0 +1,10 @@
+{
+  "name": "AstralMesh.Editor",
+  "rootNamespace": "AstralMesh",
+  "references": [
+    "AstralMesh.Runtime", "Unity.XR.ARFoundation", "Unity.XR.CoreUtils", "Unity.XR.Management",
+    "Unity.XR.Management.Editor", "Unity.RenderPipelines.Universal.Runtime", "Unity.RenderPipelines.Core.Runtime",
+    "Unity.InputSystem"
+  ],
+  "includePlatforms": ["Editor"]
+}

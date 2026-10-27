@@ -1,0 +1,12 @@
+/Library/
+/Temp/
+/Obj/
+/Logs/
+/UserSettings/
+/Builds/
+*_BurstDebugInformation_DoNotShip/
+*.csproj
+*.sln
+results.xml
+/.utmp/
+/Builds/

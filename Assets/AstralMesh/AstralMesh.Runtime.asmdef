@@ -1,0 +1,11 @@
+{
+  "name": "AstralMesh.Runtime",
+  "rootNamespace": "AstralMesh",
+  "references": [
+    "Unity.XR.ARFoundation",
+    "Unity.XR.ARSubsystems",
+    "Unity.InputSystem",
+    "NativeFilePicker.Runtime"
+  ],
+  "autoReferenced": true
+}

@@ -25,6 +25,7 @@ public static class SceneBuilder
 {
     const string Root = "Assets/AstralMesh";
     const string ScenePath = Root + "/Scenes/Main.unity";
+    static readonly string[] PaletteNames = { "NeonMagentaGreen", "ElectricPink", "ToxicGreen" };
 
     [MenuItem("AstralMesh/Build Scene and Settings")]
     public static void Build()
@@ -189,6 +190,18 @@ public static class SceneBuilder
     static void CreateScene(VolumeProfile volumeProfile, Material material, PaletteSO[] palettes, PanelSettings panelSettings)
     {
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+
+        // NewScene unloads unreferenced assets, so the instances passed in may now be destroyed.
+        // Reload everything from disk before wiring it into the scene.
+        AssetDatabase.SaveAssets();
+        volumeProfile = AssetDatabase.LoadAssetAtPath<VolumeProfile>(Root + "/Settings/AstralVolume.asset");
+        material = AssetDatabase.LoadAssetAtPath<Material>(Root + "/Materials/MandalaWire.mat");
+        panelSettings = AssetDatabase.LoadAssetAtPath<PanelSettings>(Root + "/Settings/PanelSettings.asset");
+        palettes = new PaletteSO[PaletteNames.Length];
+        for (int i = 0; i < palettes.Length; i++)
+            palettes[i] = AssetDatabase.LoadAssetAtPath<PaletteSO>($"{Root}/Settings/Palettes/{PaletteNames[i]}.asset");
+        if (volumeProfile == null || material == null || panelSettings == null || System.Array.IndexOf(palettes, null) >= 0)
+            throw new System.Exception("[AstralMesh] Failed to reload generated assets from disk");
 
         new GameObject("AR Session", typeof(ARSession));
 

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#000000">
+<title>AstralMesh</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<video id="cam" playsinline muted autoplay></video>
+<canvas id="gl"></canvas>
+
+<div id="hud" hidden>
+  <div class="meter"><span>Graves</span><i id="m-bass"></i></div>
+  <div class="meter"><span>Medios</span><i id="m-mid"></i></div>
+  <div class="meter"><span>Agudos</span><i id="m-high"></i></div>
+  <div id="fps">-- fps</div>
+</div>
+
+<div id="status" hidden></div>
+
+<section id="start">
+  <h1>AstralMesh</h1>
+  <p>Mandala fractal que reacciona al sonido, sobre la cámara de tu móvil.</p>
+  <button id="btn-start">Iniciar</button>
+  <p class="hint">Te pediré permiso para la <b>cámara</b>, el <b>micrófono</b> y el <b>movimiento</b>. Todo se procesa en tu dispositivo.</p>
+  <p id="start-error" class="error" hidden></p>
+</section>
+
+<section id="panel" hidden>
+  <button id="btn-toggle" aria-label="Mostrar u ocultar controles">⌄</button>
+  <div id="panel-body">
+    <div class="row">
+      <button id="btn-mic" class="on">Micrófono</button>
+      <label class="btn" for="file">Archivo</label>
+      <input id="file" type="file" accept="audio/*" hidden>
+      <button id="btn-demo">Demo</button>
+      <button id="btn-center">Recentrar</button>
+    </div>
+    <label>Geometría <select id="sel-geo"></select></label>
+    <label>Paleta <select id="sel-pal"></select></label>
+    <label>Expansión <input id="s-expand" type="range" min="0" max="2" step="0.01" value="0.35"></label>
+    <label>Giro <input id="s-twist" type="range" min="0" max="4" step="0.01" value="1.5"></label>
+    <label>Velocidad <input id="s-speed" type="range" min="0" max="3" step="0.01" value="1"></label>
+    <label>Deformación <input id="s-deform" type="range" min="0" max="2" step="0.01" value="0.5"></label>
+    <label>Densidad <input id="s-density" type="range" min="2" max="6" step="1" value="4"></label>
+    <label>Resplandor <input id="s-glow" type="range" min="0" max="14" step="1" value="6"></label>
+  </div>
+</section>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
